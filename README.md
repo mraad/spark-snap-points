@@ -17,6 +17,7 @@ The result set can be emitted in either [Parquet](https://parquet.apache.org), [
 
 The following diagram illustrates my development environment:
 ![](images/DevEnv.png)
+
 For Docker, HDFS and Spark, we will be using the [Cloudera Quickstart Container](http://www.cloudera.com/documentation/enterprise/5-6-x/topics/quickstart_docker_container.html). 
 
 ## Spatial Join
@@ -30,10 +31,12 @@ In the case where either input set cannot fit in the allocated memory of a job p
 smaller subsets, in such that each subset can fit into the allocated memory of a job partition to perform a localized in memory spatial operation.
 The simplest neighborhood partitioning is cookie cutting the input space into uniform square cells, in such that all the data that is inside or overlaps a square cell is processed in-memory together.
 ![](images/Partition.png)
+
 In Spark, this is achieved by mapping the input based on its envelope to one or more cell, and performing a spatial join on the `groupByKey` set.
 The `groupByKey` operation can cause an Out-Of-Memory exception if the cookie cutting cell is too big, or can cause excessive Spark shuffling if the cell size is too small.
 What is the correct cell size ? Well, this is very dependent on the data, the spatial operation and the cluster resources.
 A heuristic approach that maps the cell size to a minimized desired metric (ie. execution time, allocated memory) should be undertaken to locate the "sweet spot".
+
 ![](images/SweetSpot.png)
 
 ## Anatomy of a Snap
