@@ -55,6 +55,7 @@ Point `P` is "snappable" to segment `AB` if ![](images/eqn2.png) and then the si
 Remember, the [dot product](https://en.wikipedia.org/wiki/Dot_product) value of two vectors is a reflection of their alignment, where 1 means perfectly aligned and -1 means they are in opposite direction.
 And the [cross product](https://en.wikipedia.org/wiki/Cross_product) of two vector is a reflection of how perpendicular they are to each other. 
 Given a max distance `D`, the closest distance to a line can be searched and determined as illustrated below:
+
 ![](images/PointOnLine.png)
 
 ## Building the Project
