@@ -1,5 +1,5 @@
 #
-# http://www.lfd.uci.edu/~gohlke/pythonlibs/#python-snappy (python_snappy-0.5-cp27-none-win32.whl)
+# http://www.lfd.uci.edu/~gohlke/pythonlibs/#python-snappy
 # pip install fastavro
 # pip install hdfs
 #
@@ -13,12 +13,12 @@ class Toolbox(object):
     def __init__(self):
         self.label = "Toolbox"
         self.alias = "Toolbox"
-        self.tools = [HDFSTool]
+        self.tools = [LineTool, PointTool]
 
 
-class HDFSTool(object):
+class LineTool(object):
     def __init__(self):
-        self.label = "Import Snaps"
+        self.label = "Import Line Snaps"
         self.description = "Import snap data from HDFS in Avro or WKT format"
         self.canRunInBackground = True
 
@@ -127,5 +127,91 @@ class HDFSTool(object):
                             attr = row['attr']
                             shape = [[px, py], [qx, qy]]
                             cursor.insertRow((shape, rho, side_text, int(attr[0]), int(attr[1])))
+            arcpy.ResetProgressor()
+        parameters[0].value = fc
+
+
+class PointTool(object):
+    def __init__(self):
+        self.label = "Import Point Snaps"
+        self.description = "Import snap data from HDFS in Avro or WKT format"
+        self.canRunInBackground = True
+
+    def getParameterInfo(self):
+        feat_layer = arcpy.Parameter(
+            name="out_fc",
+            displayName="SnapPoints",
+            direction="Output",
+            datatype="Feature Layer",
+            parameterType="Derived")
+
+        host = arcpy.Parameter(
+            name="in_host",
+            displayName="Host",
+            direction="Input",
+            datatype="GPString",
+            parameterType="Required")
+        host.value = "quickstart"
+
+        user = arcpy.Parameter(
+            name="in_user",
+            displayName="User",
+            direction="Input",
+            datatype="GPString",
+            parameterType="Required")
+        user.value = "root"
+
+        path = arcpy.Parameter(
+            name="in_path",
+            displayName="Avro Path",
+            direction="Input",
+            datatype="GPString",
+            parameterType="Required")
+        path.value = "/user/root/avro"
+
+        return [feat_layer, host, user, path]
+
+    def isLicensed(self):
+        return True
+
+    def updateParameters(self, parameters):
+        return
+
+    def updateMessages(self, parameters):
+        return
+
+    def execute(self, parameters, messages):
+        host = parameters[1].value
+        user = parameters[2].value
+        path = parameters[3].value
+
+        sp_ref = arcpy.SpatialReference(4269)
+        fc = "in_memory/SnapPoints"
+        if arcpy.Exists(fc):
+            arcpy.management.Delete(fc)
+        arcpy.management.CreateFeatureclass("in_memory", "SnapPoints", "POINT",
+                                            spatial_reference=sp_ref,
+                                            has_m="DISABLED",
+                                            has_z="DISABLED")
+        arcpy.management.AddField(fc, "RHO", "FLOAT")
+        arcpy.management.AddField(fc, "ORIG", "TEXT")
+
+        fields = ['SHAPE@XY', 'RHO', 'ORIG']
+        with arcpy.da.InsertCursor(fc, fields) as cursor:
+            client = InsecureClient('http://{}:50070'.format(host), user=user)
+            parts = client.parts(path)
+            arcpy.SetProgressor("step", "Importing...", 0, len(parts), 1)
+            for part in parts:
+                arcpy.SetProgressorLabel("Importing {0}...".format(part))
+                arcpy.SetProgressorPosition()
+                with client.read("{}/{}".format(path, part)) as reader:
+                    for row in avro.reader(reader):
+                        px = row['px']
+                        py = row['py']
+                        qx = row['x']
+                        qy = row['y']
+                        rho = row['rho']
+                        cursor.insertRow(((px, py), rho, 'Y'))
+                        cursor.insertRow(((qx, qy), rho, 'N'))
             arcpy.ResetProgressor()
         parameters[0].value = fc

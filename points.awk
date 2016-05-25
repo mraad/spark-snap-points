@@ -7,7 +7,7 @@ BEGIN{
   DX=XMAX-XMIN
   DY=YMAX-YMIN
   srand()
-  for(I=0;I<1000000;I++){
+  for(I=0;I<2000000;I++){
     X=XMIN+rand()*DX
     Y=YMIN+rand()*DY
     printf "%d,%.6f,%.6f\n",I,X,Y
