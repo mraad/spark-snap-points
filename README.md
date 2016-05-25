@@ -50,6 +50,7 @@ Given a directed line segment defined by start point `A` and end point `B`, and 
 - Length of the segment `PQ`
 - Length of segment `AQ`
 - Side of the line `AB` where the point `P` resides (left, right or on the line)
+
 Point `P` is "snappable" to segment `AB` if ![](images/eqn2.png) and then the side can be determined by the direction of ![](images/eqn3.png).
 Remember, the [dot product](https://en.wikipedia.org/wiki/Dot_product) value of two vectors is a reflection of their alignment, where 1 means perfectly aligned and -1 means they are in opposite direction.
 And the [cross product](https://en.wikipedia.org/wiki/Cross_product) of two vector is a reflection of how perpendicular they are to each other. 
