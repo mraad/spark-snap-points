@@ -16,6 +16,7 @@ The result of the join is a set of rows where each row consists of:
 The result set can be emitted in either [Parquet](https://parquet.apache.org), [Avro](https://avro.apache.org) or text format, where in the latter the fields are `\t` separated and the origin to snap point linestring geometry is in [WKT](https://en.wikipedia.org/wiki/Well-known_text) format. This project includes an [ArcPy](http://help.arcgis.com/en/arcgisdesktop/10.0/help/index.html#//000v000000v7000000.htm) based toolbox to view the snapped segments in [Pro](http://www.esri.com/en/software/arcgis-pro).
 
 The following diagram illustrates my development environment:
+
 ![](images/DevEnv.png)
 
 For Docker, HDFS and Spark, we will be using the [Cloudera Quickstart Container](http://www.cloudera.com/documentation/enterprise/5-6-x/topics/quickstart_docker_container.html). 
@@ -30,6 +31,7 @@ are mapped in such that a spatial operation is performed off the broadcast refer
 In the case where either input set cannot fit in the allocated memory of a job partition, the input data is partitioned by neighborhood into
 smaller subsets, in such that each subset can fit into the allocated memory of a job partition to perform a localized in memory spatial operation.
 The simplest neighborhood partitioning is cookie cutting the input space into uniform square cells, in such that all the data that is inside or overlaps a square cell is processed in-memory together.
+
 ![](images/Partition.png)
 
 In Spark, this is achieved by mapping the input based on its envelope to one or more cell, and performing a spatial join on the `groupByKey` set.
@@ -197,8 +199,10 @@ pip install fastavro hdfs
 ```
 
 Add the toolbox `SnapToolbox.pyt` from `src\main\python` to Pro using `Insert`->`Toolbox`->`Add Toolbox`.
+
 ![](images/AddToolbox.png)
 
 Run the tool:
+
 ![](images/GeoProcessing.png)
 
