@@ -3,4 +3,4 @@ target/
 *.class
 *.iml
 *.log
-*.xml
+dependency-reduced-pom.xml
