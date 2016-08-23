@@ -1,6 +1,5 @@
 .idea/
 target/
-*.class
+src/main/python/*.xml
 *.iml
-*.log
 dependency-reduced-pom.xml

@@ -4,7 +4,7 @@ cat << EOF > /tmp/wkt.properties
 # spark.master=yarn-client
 # spark.executor.memory=512m
 spark.master=local[*]
-spark.driver.memory4g
+spark.driver.memory=4g
 spark.executor.memory=4g
 spark.ui.enabled=false
 gdb.path=hdfs:///user/root/TXDOT_Roadway_Inventory.gdb
