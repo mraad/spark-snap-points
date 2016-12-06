@@ -121,35 +121,74 @@ object Snapper extends Serializable {
     SnapM(qx, qy, qm, minLen, minDist, minRho, minSide)
   }
 
-  def snap(lhsRDD: RDD[(RowCol, Feature)],
-           rhsRDD: RDD[(RowCol, Feature)],
+  /*
+    def snap(lhsRDD: RDD[(RowCol, Feature)],
+             rhsRDD: RDD[(RowCol, Feature)],
+             maxDist: Double
+            ): RDD[SnapInfo] = {
+      lhsRDD
+        .union(rhsRDD)
+        .groupByKey()
+        .flatMap {
+          case (rowcol, iter) => {
+            val fold = iter.foldLeft(FeatureFold())(_ += _)
+            fold
+              .points
+              .flatMap(point => {
+                val px = point.x
+                val py = point.y
+                fold
+                  .lines
+                  .foldLeft(Option.empty[SnapLine])((prev, line) => {
+                    val snap = Snapper.snapXY(line.multiPath, px, py, maxDist)
+                    if (snap.snapped) {
+                      prev match {
+                        case Some(prevSnapLine) => if (prevSnapLine.snap > snap) prev else Some(SnapLine(snap, line))
+                        case _ => Some(SnapLine(snap, line))
+                      }
+                    } else
+                      prev
+                  })
+                  .map(snapLine => {
+                    SnapInfo(px, py,
+                      snapLine.snap.x,
+                      snapLine.snap.y,
+                      snapLine.snap.distanceOnLine,
+                      snapLine.snap.distanceToLine,
+                      snapLine.snap.rho,
+                      snapLine.snap.side,
+                      point.attr ++ snapLine.featureMulti.attr)
+                  })
+              })
+          }
+        }
+    }
+  */
+
+  def snap(multiRDD: RDD[(RowCol, FeatureMulti)],
+           pointRDD: RDD[(RowCol, FeaturePoint)],
            maxDist: Double
           ): RDD[SnapInfo] = {
-    lhsRDD
-      .union(rhsRDD)
-      .groupByKey()
+    multiRDD
+      .cogroup(pointRDD)
       .flatMap {
-        case (rowcol, iter) => {
-          val fold = iter.foldLeft(FeatureFold())(_ += _)
-          fold
-            .points
+        case (_, (multiIter, pointIter)) => {
+          val multiArr = multiIter.toArray
+          pointIter
             .flatMap(point => {
-              val px = point.x
-              val py = point.y
-              fold
-                .lines
-                .foldLeft(Option.empty[SnapLine])((prev, line) => {
-                  val snap = Snapper.snapXY(line.multiPath, px, py, maxDist)
+              multiArr
+                .foldLeft(Option.empty[SnapLine])((prev, multi) => {
+                  val snap = Snapper.snapXY(multi.multiPath, point.x, point.y, maxDist)
                   if (snap.snapped) {
                     prev match {
-                      case Some(prevSnapLine) => if (prevSnapLine.snap > snap) prev else Some(SnapLine(snap, line))
-                      case _ => Some(SnapLine(snap, line))
+                      case Some(prevSnapLine) => if (prevSnapLine.snap > snap) prev else Some(SnapLine(snap, multi))
+                      case _ => Some(SnapLine(snap, multi))
                     }
                   } else
                     prev
                 })
                 .map(snapLine => {
-                  SnapInfo(px, py,
+                  SnapInfo(point.x, point.y,
                     snapLine.snap.x,
                     snapLine.snap.y,
                     snapLine.snap.distanceOnLine,
@@ -162,5 +201,4 @@ object Snapper extends Serializable {
         }
       }
   }
-
 }

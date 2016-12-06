@@ -100,6 +100,9 @@ object SnapApp extends App with Logging {
         })
           .saveAsTextFile(outputPath)
     }
+    if (conf.getBoolean("system.in.read", false)) {
+      System.in.read()
+    }
 
   } finally {
     sc.stop()

@@ -2,6 +2,9 @@ package com.esri
 
 import scala.collection.mutable
 
+/**
+  * @deprecated
+  */
 case class FeatureFold() {
 
   private val m_points = mutable.Buffer[FeaturePoint]()
