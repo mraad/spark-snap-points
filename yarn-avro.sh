@@ -1,19 +1,18 @@
 #!/usr/bin/env bash
 hadoop fs -rm -r -skipTrash /user/root/avro
 cat << EOF > /tmp/avro.properties
-# spark.master=yarn-client
-# spark.executor.memory=512m
-spark.master=local[*]
-# spark.driver.memory=4g
-spark.executor.memory=4g
-spark.ui.enabled=false
-system.in.read=false
+spark.ui.enabled=true
+system.in.read=true
 gdb.path=hdfs:///user/root/TXDOT_Roadway_Inventory.gdb
 point.path=hdfs:///user/root/points.csv
 output.path=hdfs:///user/root/avro
 output.format=avro
 EOF
-spark-submit\
+time spark-submit\
+ --master yarn-client\
+ --num-executors 6\
+ --executor-cores 1\
+ --executor-memory 512M\
  --packages com.databricks:spark-avro_2.10:2.0.1,com.databricks:spark-csv_2.10:1.4.0\
- target/spark-snap-points-0.2.jar\
+ target/spark-snap-points-0.3.jar\
  /tmp/avro.properties

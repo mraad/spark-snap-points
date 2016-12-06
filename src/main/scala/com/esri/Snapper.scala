@@ -178,7 +178,7 @@ object Snapper extends Serializable {
             .flatMap(point => {
               multiArr
                 .foldLeft(Option.empty[SnapLine])((prev, multi) => {
-                  val snap = Snapper.snapXY(multi.multiPath, point.x, point.y, maxDist)
+                  val snap = Snapper.snapXY(multi.asMultiPath, point.x, point.y, maxDist)
                   if (snap.snapped) {
                     prev match {
                       case Some(prevSnapLine) => if (prevSnapLine.snap > snap) prev else Some(SnapLine(snap, multi))

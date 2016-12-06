@@ -50,7 +50,7 @@ class SnapperSpec extends FlatSpec with Matchers with BeforeAndAfterAll {
     snapInfo.x shouldBe 0.0
     snapInfo.y shouldBe 0.0
     snapInfo.distanceToLine shouldBe 1.0
-    snapInfo.distanceOnLine shouldBe 10.0
+    snapInfo.distanceOnLine shouldBe 2.0 // 10.0
   }
 
   it should "snap to 4,4.5" in {
@@ -71,7 +71,7 @@ class SnapperSpec extends FlatSpec with Matchers with BeforeAndAfterAll {
     snapInfo.x shouldBe 0.0
     snapInfo.y shouldBe 4.5
     snapInfo.distanceToLine shouldBe 1.0
-    snapInfo.distanceOnLine shouldBe 10.0
+    snapInfo.distanceOnLine shouldBe 2.0 // 10.0
   }
 
   it should "snap to 5.5,5" in {
@@ -92,7 +92,7 @@ class SnapperSpec extends FlatSpec with Matchers with BeforeAndAfterAll {
     snapInfo.x shouldBe 5.5
     snapInfo.y shouldBe 5.0
     snapInfo.distanceToLine shouldBe 1.0
-    snapInfo.distanceOnLine shouldBe 5.0
+    snapInfo.distanceOnLine shouldBe 2.0 // 5.0
   }
 
   it should "snap to 5,5" in {
@@ -113,7 +113,7 @@ class SnapperSpec extends FlatSpec with Matchers with BeforeAndAfterAll {
     snapInfo.x shouldBe 5.0
     snapInfo.y shouldBe 5.0
     snapInfo.distanceToLine shouldBe 0.0
-    snapInfo.distanceOnLine shouldBe 5.0
+    snapInfo.distanceOnLine shouldBe 2.0 // 5.0
   }
 
   it should "snap to 5.5,5.0 (2)" in {
@@ -146,7 +146,7 @@ class SnapperSpec extends FlatSpec with Matchers with BeforeAndAfterAll {
     snapInfo.x shouldBe 5.5
     snapInfo.y shouldBe 5.0
     snapInfo.distanceToLine shouldBe 0.5
-    snapInfo.distanceOnLine shouldBe 5.0
+    snapInfo.distanceOnLine shouldBe 2.0 // 5.0
 
     snapInfo.attr shouldBe Array("poly1")
   }
